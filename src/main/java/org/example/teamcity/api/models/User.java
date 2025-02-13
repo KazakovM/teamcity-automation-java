@@ -8,7 +8,7 @@ import java.sql.ConnectionBuilder;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends BaseModel {
     private String user;
     private String password;
 }
