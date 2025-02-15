@@ -1,14 +1,14 @@
 package org.example.teamcity.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-
-import java.sql.ConnectionBuilder;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BaseModel {
-    private String user;
+    private String username;
     private String password;
 }
