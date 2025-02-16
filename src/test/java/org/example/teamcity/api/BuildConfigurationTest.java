@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static io.qameta.allure.Allure.step;
 import static org.example.teamcity.api.enums.Endpoint.*;
+import static org.example.teamcity.api.factory.EntityFactory.*;
 import static org.example.teamcity.api.generators.TestDataGenerator.generate;
 import static org.example.teamcity.api.spec.Specifications.authSpec;
 import static org.example.teamcity.api.spec.Specifications.superUserSpec;
@@ -41,6 +42,28 @@ public class BuildConfigurationTest extends BaseApiTest {
             softAssert.assertEquals(buildType.getName(), createdBuildType.getName(), "buildTypeName is not correct");
         });
     }
+
+    /**
+     * Вариант теста при добавлении нового уровня абстракции -
+     * класса с методами-хелперами для создания часто используемых сущностей
+     */
+//    @Test(description = "User should be able to create build type", groups = {"Positive", "CRUD"})
+//    public void userCreatesBuildTypeTest() {
+//        var user = createUser();
+//        var project = createProject(user);
+//        var buildType = createBuildType(user, project);
+//
+//        step("Check buildType was created successfully with correct data", () -> {
+//            var requester = new CheckedBase<BuildType>(superUserSpec(), BUILD_TYPES);
+//            var createdBuildType = requester.read(buildType.getId());
+//
+//            softAssert.assertEquals(
+//                    buildType.getName(),
+//                    createdBuildType.getName(),
+//                    "buildTypeName is not correct"
+//            );
+//        });
+//    }
 
     @Test(description = "User should not be able to create build type with non-unique id", groups = {"Negative", "CRUD"})
     public void userCreatesBuildTypeWithNonUniqueIdTest() {
