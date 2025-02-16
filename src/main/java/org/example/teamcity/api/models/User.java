@@ -2,6 +2,8 @@ package org.example.teamcity.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.example.teamcity.api.annotations.Parameterizable;
+import org.example.teamcity.api.annotations.Random;
 
 @Data
 @Builder
@@ -9,6 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BaseModel {
+    @Random
     private String username;
+    @Random
     private String password;
+    private Roles roles;
 }

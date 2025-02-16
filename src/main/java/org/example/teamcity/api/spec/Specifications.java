@@ -24,7 +24,7 @@ public class Specifications {
         return reqBuilder;
     }
 
-    public static RequestSpecification superUserAuth() {
+    public static RequestSpecification superUserSpec() {
         return reqBuilder()
                 .setBaseUri("http://%s:%s@%s".formatted("", getProperty("superUserToken"), getProperty("host")))
                 .build();

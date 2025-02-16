@@ -1,27 +1,45 @@
 package org.example.teamcity.api;
 
-import org.example.teamcity.api.enums.Endpoint;
-import org.example.teamcity.api.models.User;
+import org.example.teamcity.api.models.*;
 import org.example.teamcity.api.requests.checked.CheckedBase;
-import org.example.teamcity.api.spec.Specifications;
 import org.testng.annotations.Test;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static io.qameta.allure.Allure.step;
-import static org.example.teamcity.api.enums.Endpoint.USERS;
-import static org.example.teamcity.api.spec.Specifications.superUserAuth;
+import static org.example.teamcity.api.enums.Endpoint.*;
+import static org.example.teamcity.api.generators.TestDataGenerator.generate;
+import static org.example.teamcity.api.spec.Specifications.authSpec;
+import static org.example.teamcity.api.spec.Specifications.superUserSpec;
 
 @Test(groups = {"Regression"})
 public class BuildConfigurationTest extends BaseApiTest {
     @Test(description = "User should be able to create build type", groups = {"Positive", "CRUD"})
     public void userCreatesBuildTypeTest() {
+        var user = generate(User.class);
         step("Create user", () -> {
-            var user = User.builder().username("name").password("password").build();
-            var requester = new CheckedBase<User>(superUserAuth(), USERS);
-            requester.create(user);
+            new CheckedBase<User>(superUserSpec(), USERS).create(user);
         });
-        step("Create project by user");
-        step("Create buildType for project");
-        step("Check buildType was created successfully with correct data");
+
+        var project = generate(Project.class);
+        AtomicReference<String> projectId = new AtomicReference<>("");
+        step("Create project by user", () -> {
+            var requester = new CheckedBase<Project>(authSpec(user), PROJECTS);
+            projectId.set(requester.create(project).getId());
+        });
+
+        var buildType = generate(BuildType.class);
+        buildType.setProject(Project.builder().id(projectId.get()).locator(null).build());
+        var buildTyperequester = new CheckedBase<BuildType>(authSpec(user), BUILD_TYPES);
+        AtomicReference<String> buildTypeId = new AtomicReference<>("");
+        step("Create buildType for project", () -> {
+            buildTypeId.set(buildTyperequester.create(buildType).getId());
+        });
+
+        step("Check buildType was created successfully with correct data", () -> {
+            var createdBuildType = buildTyperequester.read(buildTypeId.get());
+            softAssert.assertEquals(buildType.getName(), createdBuildType.getName(), "buildTypeName is not correct");
+        });
     }
 
     @Test(description = "User should not be able to create build type with non-unique id", groups = {"Negative", "CRUD"})

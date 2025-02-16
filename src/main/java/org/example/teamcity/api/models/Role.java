@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.teamcity.api.annotations.Optional;
-import org.example.teamcity.api.annotations.Parameterizable;
 import org.example.teamcity.api.annotations.Random;
 
 @Data
@@ -14,13 +12,9 @@ import org.example.teamcity.api.annotations.Random;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BuildType extends BaseModel{
-    @Random
-    private String id;
-    @Random
-    private String name;
-    @Parameterizable
-    private Project project;
-    @Optional
-    private Steps steps;
+public class Role extends BaseModel{
+    @Builder.Default
+    private String roleId = "SYSTEM_ADMIN";
+    @Builder.Default
+    private String scope = "g";
 }
