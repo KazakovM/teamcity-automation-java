@@ -35,11 +35,8 @@ public class Specifications {
     }
 
     public static RequestSpecification authSpec(User user) {
-        BasicAuthScheme authScheme = new BasicAuthScheme();
-        authScheme.setUserName(user.getUsername());
-        authScheme.setPassword(user.getPassword());
-        return reqBuilder()
-                .setAuth(authScheme)
-                .build();
+        var requestBuilder = reqBuilder();
+        requestBuilder.setBaseUri("http://%s:%s@%s".formatted(user.getUsername(), user.getPassword(), getProperty("host")));
+        return requestBuilder.build();
     }
 }

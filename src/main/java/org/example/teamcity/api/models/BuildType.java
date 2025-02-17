@@ -16,6 +16,7 @@ import org.example.teamcity.api.annotations.Random;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BuildType extends BaseModel{
     @Random
+    @Parameterizable
     private String id;
     @Random
     private String name;
