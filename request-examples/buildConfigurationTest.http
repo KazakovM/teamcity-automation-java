@@ -1,11 +1,11 @@
 ### Constants
-@host = 172.20.10.3
+@host = 192.168.1.138
 @port = 8111
 @user = admin
 @password = admin
 
 ### Hardcoded data
-@projectId = project2
+@projectId = project999
 @buildTypeId = buildType2
 ### GET all projects
 GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects
@@ -22,8 +22,6 @@ Accept: application/json
     "parentProject": {
         "locator": "_Root"
     },
-    "name": "{{projectId}}",
-    "id": "{{projectId}}",
     "copyAllAssociatedSettings": true
 }
 
