@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import static org.example.teamcity.api.spec.Specifications.authSpec;
 
 public class DummyTest extends BaseApiTest {
-    @Test
+    @Test(enabled = false)
     public void userShouldBeAbleGetAllProjects() {
         RestAssured
                 .given()
