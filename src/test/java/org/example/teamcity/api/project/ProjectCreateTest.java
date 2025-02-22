@@ -113,7 +113,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectDto = testData.getProject();
         projectDto.setId("");
 
-        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_PROJECT_ID_EMPTY );
+        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_PROJECT_ID_EMPTY);
         // todo 500 вместо 400 - баг?
     }
 
