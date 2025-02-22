@@ -38,6 +38,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProject() {
         var projectRequest = testData.getProject();
         var createdProject = createProject(projectRequest);
+
         assertProjectFields(projectRequest, createdProject);
     }
 
@@ -50,6 +51,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithNullId() {
         var projectRequest = testData.getProject();
         projectRequest.setId(null);
+
         var id = createProject(projectRequest).getId();
         var createdProject = readProject(id);
 
@@ -64,7 +66,9 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithValidIdLength(String id) {
         var projectRequest = testData.getProject();
         projectRequest.setId(id);
+
         var createdProject = createProject(projectRequest);
+
         assertProjectFields(projectRequest, createdProject);
     }
 
@@ -72,7 +76,9 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithMinLengthName() {
         var projectRequest = testData.getProject();
         projectRequest.setName("s");
+
         var createdProject = createProject(projectRequest);
+
         assertProjectFields(projectRequest, createdProject);
     }
 
@@ -83,7 +89,9 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithNullParent() {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(null);
+
         var createdProject = createProject(projectRequest);
+
         softAssert.assertEquals(projectRequest.getId(), createdProject.getId(), "projectId is not correct");
         softAssert.assertEquals(projectRequest.getName(), createdProject.getName(), "projectName is not correct");
         softAssert.assertNotEquals(projectRequest.getParentProject(), createdProject.getParentProject(), "parentProject is not correct");
@@ -93,6 +101,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithInvalidId(String invalidId) {
         var projectDto = testData.getProject();
         projectDto.setId(invalidId);
+
         assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, "ID should start with a latin letter");
         // todo 500 вместо 400 - баг?
     }
@@ -101,6 +110,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithEmptyId() {
         var projectDto = testData.getProject();
         projectDto.setId("");
+
         assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, "Project ID must not be empty" );
         // todo 500 вместо 400 - баг?
     }
@@ -109,6 +119,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithEmptyName() {
         var projectDto = testData.getProject();
         projectDto.setName("");
+
         assertProjectCreationFails(projectDto, SC_BAD_REQUEST, "Project name cannot be empty");
     }
 
@@ -116,6 +127,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithSameId() {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId());
+
         assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, "already used by another project");
     }
 
@@ -123,6 +135,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithSameIdDifferentCase() {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId().toUpperCase());
+
         assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, "already used by another project");
     }
 
@@ -131,6 +144,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameName = generate(Project.class);
         projectWithSameName.setName(testData.getProject().getName());
+
         assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, "Project with this name already exists");
     }
 
@@ -139,6 +153,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameName = generate(Project.class);
         projectWithSameName.setName(testData.getProject().getName().toUpperCase());
+
         assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, "Project with this name already exists");
     }
 
@@ -146,6 +161,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithNonExistentParentLocator() {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(ParentProject.builder().locator(RandomData.getString() + RandomData.getString()).build());
+
         assertProjectCreationFails(projectRequest, SC_NOT_FOUND, "No project found by name or internal/external id");
     }
 
@@ -153,6 +169,7 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userShouldNotCreateProjectWithInvalidParentLocatorDimension() {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(ParentProject.builder().locator("test:").build());
+
         assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, "Locator dimension [test] is unknown");
     }
 
@@ -160,12 +177,14 @@ public class ProjectCreateTest extends BaseApiTest {
     public void userCreatesProjectWithEmptyParentLocator() {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(ParentProject.builder().locator("").build());
+
         assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, "No project specified");
     }
 
     @Test(description = "Project creation should not be available without authorization", groups = {"Negative", "Authorization"})
     public void unauthorizedUserCreatesProject() {
         var projectRequest = testData.getProject();
+
         new UncheckedBase(unauthSpec(), PROJECTS)
                 .create(projectRequest)
                 .then()
@@ -179,6 +198,7 @@ public class ProjectCreateTest extends BaseApiTest {
         userRequest.setRoles(null);
         superUserCheckedRequests.getRequest(USERS).create(userRequest);
         var projectRequest = testData.getProject();
+
         new UncheckedBase(authSpec(userRequest), PROJECTS)
                 .create(projectRequest)
                 .then()
