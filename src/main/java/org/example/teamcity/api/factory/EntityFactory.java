@@ -3,12 +3,9 @@ package org.example.teamcity.api.factory;
 import org.example.teamcity.api.models.BuildType;
 import org.example.teamcity.api.models.Project;
 import org.example.teamcity.api.models.User;
-import org.example.teamcity.api.requests.CheckedRequests;
 import org.example.teamcity.api.requests.checked.CheckedBase;
 
 import java.util.Arrays;
-
-import static io.qameta.allure.Allure.step;
 
 import static org.example.teamcity.api.enums.Endpoint.*;
 import static org.example.teamcity.api.generators.TestDataGenerator.generate;
@@ -21,8 +18,6 @@ import static org.example.teamcity.api.spec.Specifications.superUserSpec;
 public class EntityFactory {
     public static User createUser() {
         var user = generate(User.class);
-        System.out.println("user in createUser = " + user.toString());
-
         return createUser(user);
     }
 

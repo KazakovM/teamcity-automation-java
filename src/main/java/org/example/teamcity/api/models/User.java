@@ -11,6 +11,7 @@ import org.example.teamcity.api.annotations.Random;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BaseModel {
+    private String id;
     @Random
     private String username;
     @Random
