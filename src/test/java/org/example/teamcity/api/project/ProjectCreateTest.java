@@ -15,7 +15,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.http.HttpStatus.*;
+import static org.example.teamcity.api.constants.ErrorMessages.*;
 import static org.example.teamcity.api.enums.Endpoint.PROJECTS;
 import static org.example.teamcity.api.enums.Endpoint.USERS;
 import static org.example.teamcity.api.generators.TestDataGenerator.generate;
@@ -102,7 +104,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectDto = testData.getProject();
         projectDto.setId(invalidId);
 
-        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, "ID should start with a latin letter");
+        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_ID_STARTS_WITH_LATIN_LETTER);
         // todo 500 вместо 400 - баг?
     }
 
@@ -111,7 +113,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectDto = testData.getProject();
         projectDto.setId("");
 
-        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, "Project ID must not be empty" );
+        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_PROJECT_ID_EMPTY );
         // todo 500 вместо 400 - баг?
     }
 
@@ -120,7 +122,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectDto = testData.getProject();
         projectDto.setName("");
 
-        assertProjectCreationFails(projectDto, SC_BAD_REQUEST, "Project name cannot be empty");
+        assertProjectCreationFails(projectDto, SC_BAD_REQUEST, ERROR_PROJECT_NAME_EMPTY);
     }
 
     @Test(description = "User should not be able to create project with duplicate Id (same case)", groups = {"Negative"})
@@ -128,7 +130,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId());
 
-        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, "already used by another project");
+        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ALREADY_USED);
     }
 
     @Test(description = "User should not be able to create project with duplicate Id (different case)", groups = {"Negative"})
@@ -136,7 +138,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId().toUpperCase());
 
-        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, "already used by another project");
+        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ALREADY_USED);
     }
 
     @Test(description = "User should not be able to create project with duplicate Name (same case)", groups = {"Negative"})
@@ -145,7 +147,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectWithSameName = generate(Project.class);
         projectWithSameName.setName(testData.getProject().getName());
 
-        assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, "Project with this name already exists");
+        assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, ERROR_PROJECT_NAME_EXISTS);
     }
 
     @Test(description = "User should not be able to create project with duplicate Name (different case)", groups = {"Negative"})
@@ -154,7 +156,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectWithSameName = generate(Project.class);
         projectWithSameName.setName(testData.getProject().getName().toUpperCase());
 
-        assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, "Project with this name already exists");
+        assertProjectCreationFails(projectWithSameName, SC_BAD_REQUEST, ERROR_PROJECT_NAME_EXISTS);
     }
 
     @Test(description = "User should not be able to create project with non existent parent locator", groups = {"Negative"})
@@ -162,15 +164,24 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(ParentProject.builder().locator(RandomData.getString() + RandomData.getString()).build());
 
-        assertProjectCreationFails(projectRequest, SC_NOT_FOUND, "No project found by name or internal/external id");
+        assertProjectCreationFails(projectRequest, SC_NOT_FOUND, ERROR_PARENT_PROJECT_NOT_FOUND);
+    }
+
+    @Test(description = "User should not be able to create project with unknown dimension of parent locator", groups = {"Negative"})
+    public void userShouldNotCreateProjectWithUnknownParentLocatorDimension() {
+        var projectRequest = testData.getProject();
+        var locator = randomAlphabetic(4);
+        projectRequest.setParentProject(ParentProject.builder().locator(locator + ":").build());
+
+        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, getLocatorErrorMessage(locator));
     }
 
     @Test(description = "User should not be able to create project with invalid dimension of parent locator", groups = {"Negative"})
     public void userShouldNotCreateProjectWithInvalidParentLocatorDimension() {
         var projectRequest = testData.getProject();
-        projectRequest.setParentProject(ParentProject.builder().locator("test:").build());
+        projectRequest.setParentProject(ParentProject.builder().locator(RandomData.getString() + ":").build());
 
-        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, "Locator dimension [test] is unknown");
+        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, ERROR_BAD_LOCATOR);
     }
 
     @Test(description = "User should not be able to create project with empty parent locator", groups = {"Negative"})
@@ -178,7 +189,7 @@ public class ProjectCreateTest extends BaseApiTest {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(ParentProject.builder().locator("").build());
 
-        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, "No project specified");
+        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, ERROR_NO_PROJECT_SPECIFIED);
     }
 
     @Test(description = "Project creation should not be available without authorization", groups = {"Negative", "Authorization"})
@@ -189,7 +200,7 @@ public class ProjectCreateTest extends BaseApiTest {
                 .create(projectRequest)
                 .then()
                 .assertThat().statusCode(HttpStatus.SC_UNAUTHORIZED)
-                .body(Matchers.containsString("Authentication required"));
+                .body(Matchers.containsString(ERROR_AUTHENTICATION_REQUIRED));
     }
 
     @Test(description = "User without privileged role should not be able to create project", groups = {"Negative", "Roles"})
@@ -203,7 +214,7 @@ public class ProjectCreateTest extends BaseApiTest {
                 .create(projectRequest)
                 .then()
                 .assertThat().statusCode(SC_FORBIDDEN)
-                .body(Matchers.containsString("You do not have \"Create subproject\" permission"));
+                .body(Matchers.containsString(ERROR_NO_CREATE_SUBPROJECT_PERMISSION));
     }
 
     private void createUserAndInitRequests() {
