@@ -130,7 +130,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId());
 
-        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ALREADY_USED);
+        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ID_ALREADY_USED);
     }
 
     @Test(description = "User should not be able to create project with duplicate Id (different case)", groups = {"Negative"})
@@ -138,7 +138,7 @@ public class ProjectCreateTest extends BaseApiTest {
         createProject(testData.getProject());
         var projectWithSameId = generate(Project.class, testData.getProject().getId().toUpperCase());
 
-        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ALREADY_USED);
+        assertProjectCreationFails(projectWithSameId, SC_BAD_REQUEST, ERROR_ID_ALREADY_USED);
     }
 
     @Test(description = "User should not be able to create project with duplicate Name (same case)", groups = {"Negative"})
