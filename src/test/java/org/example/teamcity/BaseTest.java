@@ -14,11 +14,12 @@ import static org.example.teamcity.api.spec.Specifications.superUserSpec;
 public class BaseTest {
     protected SoftAssert softAssert;
     protected CheckedRequests superUserCheckedRequests = new CheckedRequests(superUserSpec());
-    protected TestData testData = generate();
+    protected TestData testData;
 
     @BeforeMethod(alwaysRun = true)
     public void beforeTest() {
         softAssert = new SoftAssert();
+        testData = generate();
     }
 
     @AfterMethod(alwaysRun = true)

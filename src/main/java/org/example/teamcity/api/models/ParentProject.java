@@ -5,20 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.teamcity.api.annotations.Parameterizable;
-import org.example.teamcity.api.annotations.Random;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Project extends BaseModel{
-    @Random
-    @Parameterizable
-    private String id;
-    @Random
-    @Parameterizable
-    private String name;
-    private ParentProject parentProject;
+public class ParentProject extends BaseModel {
+    private String locator = "_Root";
 }
