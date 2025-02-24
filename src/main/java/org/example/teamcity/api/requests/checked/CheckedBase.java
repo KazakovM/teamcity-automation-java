@@ -9,6 +9,8 @@ import org.example.teamcity.api.requests.CrudInterface;
 import org.example.teamcity.api.requests.Request;
 import org.example.teamcity.api.requests.unchecked.UncheckedBase;
 
+import java.util.Map;
+
 @SuppressWarnings("unchecked")
 public final class CheckedBase<T extends BaseModel> extends Request implements CrudInterface {
     private final UncheckedBase uncheckedBase;
@@ -31,6 +33,14 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     public T read(String id) {
         return (T) uncheckedBase
                 .read(id)
+                .then().assertThat().statusCode(HttpStatus.SC_OK)
+                .extract().as(endpoint.getModelClass());
+    }
+
+    // Новый метод для чтения с несколькими параметрами пути
+    public T read(Map<String, Object> pathParams) {
+        return (T) uncheckedBase
+                .read(pathParams)
                 .then().assertThat().statusCode(HttpStatus.SC_OK)
                 .extract().as(endpoint.getModelClass());
     }
