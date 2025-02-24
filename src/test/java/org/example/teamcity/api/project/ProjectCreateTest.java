@@ -4,17 +4,17 @@ import io.qameta.allure.Feature;
 import org.apache.http.HttpStatus;
 import org.example.teamcity.api.BaseApiTest;
 import org.example.teamcity.api.generators.RandomData;
-import org.example.teamcity.api.models.ParentProject;
-import org.example.teamcity.api.models.Project;
-import org.example.teamcity.api.models.User;
+import org.example.teamcity.api.models.*;
 import org.example.teamcity.api.requests.CheckedRequests;
 import org.example.teamcity.api.requests.unchecked.UncheckedBase;
+import org.example.teamcity.common.provider.BooleanProvider;
 import org.example.teamcity.common.provider.InvalidIdDataProvider;
 import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.http.HttpStatus.*;
 import static org.example.teamcity.api.constants.ErrorMessages.*;
@@ -36,62 +36,77 @@ public class ProjectCreateTest extends BaseApiTest {
         createUserAndInitRequests();
     }
 
-    @Test(description = "User should be able to create project", groups = {"Positive"})
-    public void userCreatesProject() {
+    @Test(description = "User should be able to create project with correct data", groups = {"Positive"})
+    public void userCreatesProjectWithCorrectData() {
         var projectRequest = testData.getProject();
         var createdProject = createProject(projectRequest);
-
-        assertProjectFields(projectRequest, createdProject);
+        softAssert.assertEquals(projectRequest, createdProject);
     }
 
-    /**
-     * Текущая логика - при отсутствии переданного Id он должен генерироваться автоматически на стороне сервера
-     * Значение Id должно соответствовать значению Name при удалении пунктуации и приведении к единому регистру
-     * Логика не описана в пользовательской документации, но может считаться валидной
-     */
+    @Test(description = "User should be able to create a project if id includes repeating symbols", groups = {"Positive"})
+    public void userCreatesProjectWithIdRepeatingSymbols() {
+        var projectRequest = testData.getProject();
+        projectRequest.setId("AAAAAAA");
+        var createdProject = createProject(projectRequest);
+        softAssert.assertEquals(projectRequest, createdProject);
+    }
+
+    @Test(description = "User should be able to create a project if id includes latin letters, digits", groups = {"Positive"})
+    public void userCreatesProjectWithIdLatinDigits() {
+        var projectRequest = testData.getProject();
+        projectRequest.setId(projectRequest.getId() + "1");
+        var createdProject = createProject(projectRequest);
+        softAssert.assertEquals(projectRequest, createdProject);
+    }
+
     @Test(description = "User should be able to create project with Id = null", groups = {"Positive"})
     public void userCreatesProjectWithNullId() {
         var projectRequest = testData.getProject();
         projectRequest.setId(null);
 
         var id = createProject(projectRequest).getId();
-        var createdProject = readProject(id);
+        projectRequest.setId(id);
 
-        softAssert.assertEquals(
-                projectRequest.getName().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(),
-                createdProject.getId().toLowerCase(), "projectId is not correct");
-        softAssert.assertEquals(projectRequest.getName(), createdProject.getName(), "projectName is not correct");
-        softAssert.assertEquals(projectRequest.getParentProject(), createdProject.getParentProject(), "parentProject is not correct");
+        var createdProject = readProject(id);
+        softAssert.assertEquals(createdProject, projectRequest);
     }
 
     @Test(description = "User should be able to create project with valid Id length (min 1, max 225)", groups = {"Positive"}, dataProvider = "validIds")
     public void userCreatesProjectWithValidIdLength(String id) {
         var projectRequest = testData.getProject();
         projectRequest.setId(id);
-
         var createdProject = createProject(projectRequest);
-
-        assertProjectFields(projectRequest, createdProject);
+        softAssert.assertEquals(projectRequest, createdProject);
     }
 
-    @Test(description = "User should be able to create project with Name of 1 char", groups = {"Positive"})
+    @Test(description = "User should be able to create a project if name has 1 symbol", groups = {"Positive"})
     public void userCreatesProjectWithMinLengthName() {
         var projectRequest = testData.getProject();
         projectRequest.setName("s");
-
         var createdProject = createProject(projectRequest);
-
-        assertProjectFields(projectRequest, createdProject);
+        softAssert.assertEquals(projectRequest, createdProject);
     }
 
-    /**
-     * При отсутствии переданного parentProject должен создаваться дефолтный ParentProject с "locator": "_Root"
-     */
+    @Test(description = "User should be able to create a project if name has more than 225 symbols", groups = {"Positive"})
+    public void userCreatesProjectWithLongName() {
+        var projectRequest = testData.getProject();
+        projectRequest.setName("b".repeat(226));
+        var createdProject = createProject(projectRequest);
+        softAssert.assertEquals(projectRequest, createdProject);
+    }
+
+    @Test(description = "User should be able to create a project if name has cyrillic symbols", groups = {"Positive"})
+    public void userCreatesProjectWithCyrillicName() {
+        var projectRequest = testData.getProject();
+        projectRequest.setName(projectRequest.getName() + " кириллица");
+        var createdProject = createProject(projectRequest);
+        softAssert.assertEquals(projectRequest, createdProject);
+    }
+
     @Test(description = "User should be able to create project with parentProject = null", groups = {"Positive"})
     public void userCreatesProjectWithNullParent() {
         var projectRequest = testData.getProject();
         projectRequest.setParentProject(null);
-
         var createdProject = createProject(projectRequest);
 
         softAssert.assertEquals(projectRequest.getId(), createdProject.getId(), "projectId is not correct");
@@ -99,30 +114,40 @@ public class ProjectCreateTest extends BaseApiTest {
         softAssert.assertNotEquals(projectRequest.getParentProject(), createdProject.getParentProject(), "parentProject is not correct");
     }
 
+    @Test(description = "User should be able to create a copy of a project with or without all associated settings", groups = {"Positive"}, dataProvider = "booleanProvider",  dataProviderClass = BooleanProvider.class)
+    public void userCreatesProjectByCopying(boolean copyAllAssociatedSettings) {
+        var id = createProject(testData.getProject()).getId();
+        var projectRequest = generate(Project.class);
+        projectRequest.setSourceProject(SourceProject.builder().locator(id).build());
+        projectRequest.setCopyAllAssociatedSettings(copyAllAssociatedSettings);
+
+        var createdProject = createProject(projectRequest);
+
+        assertProjectFields(projectRequest, createdProject);
+    }
+
     @Test(description = "User should not be able to create project with invalid Id", groups = {"Negative"}, dataProvider = "invalidIds", dataProviderClass = InvalidIdDataProvider.class)
     public void userCreatesProjectWithInvalidId(String invalidId) {
-        var projectDto = testData.getProject();
-        projectDto.setId(invalidId);
+        var projectRequest = testData.getProject();
+        projectRequest.setId(invalidId);
 
-        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_ID_STARTS_WITH_LATIN_LETTER);
-        // todo 500 вместо 400 - баг?
+        assertProjectCreationFails(projectRequest, SC_INTERNAL_SERVER_ERROR, ERROR_ID_STARTS_WITH_LATIN_LETTER);
     }
 
     @Test(description = "User should not be able to create project with empty Id", groups = {"Negative"})
     public void userCreatesProjectWithEmptyId() {
-        var projectDto = testData.getProject();
-        projectDto.setId("");
+        var projectRequest = testData.getProject();
+        projectRequest.setId("");
 
-        assertProjectCreationFails(projectDto, SC_INTERNAL_SERVER_ERROR, ERROR_PROJECT_ID_EMPTY);
-        // todo 500 вместо 400 - баг?
+        assertProjectCreationFails(projectRequest, SC_INTERNAL_SERVER_ERROR, ERROR_PROJECT_ID_EMPTY);
     }
 
     @Test(description = "User should not be able to create project with empty Name", groups = {"Negative"})
     public void userCreatesProjectWithEmptyName() {
-        var projectDto = testData.getProject();
-        projectDto.setName("");
+        var projectRequest = testData.getProject();
+        projectRequest.setName("");
 
-        assertProjectCreationFails(projectDto, SC_BAD_REQUEST, ERROR_PROJECT_NAME_EMPTY);
+        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, ERROR_PROJECT_NAME_EMPTY);
     }
 
     @Test(description = "User should not be able to create project with duplicate Id (same case)", groups = {"Negative"})
@@ -192,6 +217,22 @@ public class ProjectCreateTest extends BaseApiTest {
         assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, ERROR_NO_PROJECT_SPECIFIED);
     }
 
+    @Test(description = "User should not be able to create a copy of non existing project", groups = {"Negative"})
+    public void userCreatesCopyOfNonExistingProject() {
+        var projectRequest = testData.getProject();
+        projectRequest.setSourceProject(SourceProject.builder().locator(RandomData.getString() + RandomData.getString()).build());
+
+        assertProjectCreationFails(projectRequest, SC_NOT_FOUND, ERROR_PARENT_PROJECT_NOT_FOUND);
+    }
+
+    @Test(description = "User should not be able to create a copy with empty info about source project", groups = {"Negative"})
+    public void userCreatesCopyWithEmptyInfo() {
+        var projectRequest = testData.getProject();
+        projectRequest.setSourceProject(SourceProject.builder().locator(null).build());
+
+        assertProjectCreationFails(projectRequest, SC_BAD_REQUEST, ERROR_NO_PROJECT_SPECIFIED);
+    }
+
     @Test(description = "Project creation should not be available without authorization", groups = {"Negative", "Authorization"})
     public void unauthorizedUserCreatesProject() {
         var projectRequest = testData.getProject();
@@ -203,13 +244,19 @@ public class ProjectCreateTest extends BaseApiTest {
                 .body(Matchers.containsString(ERROR_AUTHENTICATION_REQUIRED));
     }
 
-    @Test(description = "User without privileged role should not be able to create project", groups = {"Negative", "Roles"})
-    public void userCreatesProjectWithoutPrivilege() {
+    @Test(description = "User should not be able to create project without privileged role", groups = {"Negative", "Roles"}, dataProvider = "rolesProvider")
+    public void userCreatesProjectWithDifferentRoles(String roleId) {
         var userRequest = generate(User.class);
-        userRequest.setRoles(null);
+
+        if (roleId != null) {
+            var role = Role.builder().roleId(roleId).build();
+            userRequest.setRoles(Roles.builder().role(singletonList(role)).build());
+        } else {
+            userRequest.setRoles(null);
+        }
+
         superUserCheckedRequests.getRequest(USERS).create(userRequest);
         var projectRequest = testData.getProject();
-
         new UncheckedBase(authSpec(userRequest), PROJECTS)
                 .create(projectRequest)
                 .then()
@@ -237,6 +284,16 @@ public class ProjectCreateTest extends BaseApiTest {
         };
     }
 
+    @DataProvider(name = "rolesProvider")
+    public Object[][] rolesProvider() {
+        return new Object[][]{
+                {null},
+                {"PROJECT_VIEWER"},
+                {"PROJECT_DEVELOPER"},
+                {"AGENT_MANAGER"}
+        };
+    }
+
     private void assertProjectCreationFails(Project projectRequest, int expectedStatusCode, String expectedErrorMessage) {
         new UncheckedBase(authSpec(testData.getUser()), PROJECTS)
                 .create(projectRequest)
@@ -253,6 +310,3 @@ public class ProjectCreateTest extends BaseApiTest {
         return checkedRequests.<Project>getRequest(PROJECTS).read(projectId);
     }
 }
-
-// ВОПРОС: какие из нетестовых методов можно перенести в отдельные классы вне тестов для потенциального переиспользования?
-// как эти классы могли бы называться и где находиться?
