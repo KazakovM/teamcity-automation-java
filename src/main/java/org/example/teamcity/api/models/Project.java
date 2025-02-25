@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.teamcity.api.annotations.Optional;
+import org.example.teamcity.api.annotations.Parameterizable;
 import org.example.teamcity.api.annotations.Random;
 
 @Data
@@ -14,8 +16,14 @@ import org.example.teamcity.api.annotations.Random;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project extends BaseModel{
     @Random
+    @Parameterizable
     private String id;
     @Random
+    @Parameterizable
     private String name;
-    private String locator;
+    private ParentProject parentProject;
+    @Optional
+    private Boolean copyAllAssociatedSettings;
+    @Optional
+    private SourceProject sourceProject = null;
 }
