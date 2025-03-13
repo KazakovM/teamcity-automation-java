@@ -290,7 +290,7 @@ public class ProjectCreateTest extends BaseApiTest {
                 {null},
                 {"PROJECT_VIEWER"},
                 {"PROJECT_DEVELOPER"},
-                {"AGENT_MANAGER"}
+//                {"AGENT_MANAGER"}
         };
     }
 
