@@ -307,6 +307,6 @@ public class ProjectCreateTest extends BaseApiTest {
     }
 
     private Project readProject(String projectId) {
-        return checkedRequests.<Project>getRequest(PROJECTS).read(projectId);
+        return checkedRequests.<Project>getRequest(PROJECTS).read("id:" + projectId);
     }
 }
