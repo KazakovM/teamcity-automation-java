@@ -26,7 +26,7 @@ public class BuildTypeTest extends BaseApiTest {
         userCheckedRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
         userCheckedRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
 
-        var createdBuildType = userCheckedRequests.<BuildType>getRequest(BUILD_TYPES).read(testData.getBuildType().getId());
+        var createdBuildType = userCheckedRequests.<BuildType>getRequest(BUILD_TYPES).read("id:" + testData.getBuildType().getId());
         softAssert.assertEquals(testData.getBuildType().getName(), createdBuildType.getName(), "buildTypeName is not correct");
         softAssert.assertEquals(testData.getBuildType().getId(), createdBuildType.getId(), "buildId is not correct");
     }
@@ -42,7 +42,7 @@ public class BuildTypeTest extends BaseApiTest {
         var buildType = createBuildType(user, project);
 
         var createdBuildType = new CheckedRequests(authSpec(user))
-                .<BuildType>getRequest(BUILD_TYPES).read(buildType.getId());
+                .<BuildType>getRequest(BUILD_TYPES).read("id:" + buildType.getId());
 
         softAssert.assertEquals(buildType.getName(), createdBuildType.getName(), "buildTypeName is not correct");
         softAssert.assertEquals(buildType.getId(), createdBuildType.getId(), "buildId is not correct");
