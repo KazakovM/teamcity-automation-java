@@ -3,7 +3,7 @@ package org.example.teamcity.ui;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import org.example.teamcity.BaseTest;
-import org.example.teamcity.api.enums.Endpoint;
+import org.example.teamcity.api.models.Project;
 import org.example.teamcity.api.models.User;
 import org.example.teamcity.ui.pages.LoginPage;
 import org.testng.annotations.AfterMethod;
@@ -12,6 +12,8 @@ import org.testng.annotations.BeforeSuite;
 import java.util.Map;
 
 import static org.example.teamcity.api.config.Config.getProperty;
+import static org.example.teamcity.api.enums.Endpoint.PROJECTS;
+import static org.example.teamcity.api.enums.Endpoint.USERS;
 
 public class BaseUiTest extends BaseTest {
     @BeforeSuite(alwaysRun = true)
@@ -31,8 +33,14 @@ public class BaseUiTest extends BaseTest {
         Selenide.closeWebDriver();
     }
 
+    protected static final String REPO_URL = "https://github.com/AlexPshe/spring-core-for-qa";
+
     protected void loginAs(User user) {
-        superUserCheckedRequests.getRequest(Endpoint.USERS).create(testData.getUser());
-        LoginPage.open().login(testData.getUser());
+        superUserCheckedRequests.getRequest(USERS).create(testData.getUser());
+        LoginPage.open().login(user);
+    }
+
+    protected Project createProject(Project project) {
+        return superUserCheckedRequests.<Project>getRequest(PROJECTS).create(project);
     }
 }
