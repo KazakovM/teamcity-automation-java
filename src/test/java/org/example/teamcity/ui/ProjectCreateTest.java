@@ -14,7 +14,7 @@ import static org.example.teamcity.api.enums.Endpoint.PROJECTS;
 public class ProjectCreateTest extends BaseUiTest {
 
     @Test(description = "User should be able to create project", groups = {"Positive"})
-    public void userCreatesProject() {
+    public void userCreatesProject() throws InterruptedException {
         // подготовка окружения
         loginAs(testData.getUser());
 
