@@ -1,0 +1,17 @@
+name: Deploy backend
+on: workflow_call
+
+# Примерные степы как может выглядеть пайплайн фронтенда
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build frontend
+        run: echo "Building frontend build, running unit-tests, publishing docker image with new commits"
+
+  deploy-stage:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy frontend to stage
+        run: echo "Deploying frontend"
