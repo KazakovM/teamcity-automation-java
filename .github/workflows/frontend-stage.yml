@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build frontend
-        run: echo "Building frontend build, running unit-tests, publishing docker image with new commits
+        run: echo "Building frontend build, running unit-tests, publishing docker image with new commits"
 
   deploy-stage:
     needs: build
