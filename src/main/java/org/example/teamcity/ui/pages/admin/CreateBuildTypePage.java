@@ -21,6 +21,7 @@ public class CreateBuildTypePage extends CreateBasePage {
     public CreateBuildTypePage setupBuildType(String buildTypeName) {
         buildTypeNameInput.val(buildTypeName);
         submitButton.click();
+        Selenide.sleep(1000);
         return this;
     }
 
