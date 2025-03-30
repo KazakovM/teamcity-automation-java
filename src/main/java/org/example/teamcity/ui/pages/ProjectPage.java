@@ -16,7 +16,7 @@ public class ProjectPage extends BasePage {
 
     public SelenideElement title = $("span[class*='ProjectPageHeader']");
 
-    private ElementsCollection buildTypeElements = $$(".BuildTypes__item--UX");
+    private final ElementsCollection buildTypeElements = $$("div[class*='BuildTypes__item']");
 
     public ProjectPage() {
         title.shouldBe(Condition.visible, BASE_WAITING);

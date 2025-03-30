@@ -26,7 +26,8 @@ public class ProjectsPage extends BasePage {
     // UI elements -> List<Object>
     // ElementsCollection -> List<BasePageElement>
     public static ProjectsPage open() {
-        return Selenide.open(PROJECTS_URL, ProjectsPage.class);
+        Selenide.open(PROJECTS_URL, ProjectsPage.class);
+        return Selenide.page(ProjectsPage.class);
     }
 
     public List<ProjectElement> getProjects() {
