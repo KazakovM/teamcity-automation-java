@@ -26,7 +26,7 @@ public class StartBuildTest extends BaseApiTest {
     private CheckedRequests checkedRequests;
     private CheckedRequests checkedMockRequest;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setupWireMockServer() {
         setupBuildQueueMock();
         createTestDataAndInitRequests();
