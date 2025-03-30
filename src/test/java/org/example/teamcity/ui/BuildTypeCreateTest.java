@@ -31,7 +31,7 @@ public class BuildTypeCreateTest extends BaseUiTest {
 
         step("API check that buildType was successfully created", () -> {
             var createdBuildType = superUserCheckedRequests.<BuildType>getRequest(BUILD_TYPES)
-                    .read("name:" + testData.getBuildType().getName());
+                    .read("project:" + testData.getBuildType().getId());
             softAssert.assertEquals(testData.getBuildType().getName(), createdBuildType.getName());
         });
 
