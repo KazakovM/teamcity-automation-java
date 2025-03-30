@@ -27,5 +27,4 @@ public class CreateBuildTypePage extends CreateBasePage {
     public String getErrorMessage() {
         return errorMessage.text();
     }
-
 }

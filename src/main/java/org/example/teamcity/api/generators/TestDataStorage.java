@@ -15,11 +15,11 @@ public class TestDataStorage {
     private final EnumMap<Endpoint, Set<String>> createdEntities;
 
 
-    private TestDataStorage() {
+    public TestDataStorage() {
         createdEntities = new EnumMap<>(Endpoint.class);
     }
 
-    private void addCreatedEntity(Endpoint endpoint, String id) {
+    public void addCreatedEntity(Endpoint endpoint, String id) {
         if (id != null) {
             createdEntities.computeIfAbsent(endpoint, key_ -> new HashSet<>()).add(id);
         }

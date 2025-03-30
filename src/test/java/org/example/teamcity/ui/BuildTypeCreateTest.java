@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import static io.qameta.allure.Allure.step;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.example.teamcity.api.enums.Endpoint.BUILD_TYPES;
+import static org.example.teamcity.api.generators.TestDataStorage.getTestDataStorage;
 import static org.example.teamcity.ui.constants.ErrorMessages.ERROR_BUILD_TYPE_EMPTY_NAME;
 
 @Test(groups = {"Regression"})
@@ -31,8 +32,9 @@ public class BuildTypeCreateTest extends BaseUiTest {
 
         step("API check that buildType was successfully created", () -> {
             var createdBuildType = superUserCheckedRequests.<BuildType>getRequest(BUILD_TYPES)
-                    .read("project:" + testData.getBuildType().getId());
+                    .read("project:" + testData.getProject().getName());
             softAssert.assertEquals(testData.getBuildType().getName(), createdBuildType.getName());
+            getTestDataStorage().addCreatedEntity(BUILD_TYPES, createdBuildType);
         });
 
         step("Check that buildType is displayed on Project page", () -> {
