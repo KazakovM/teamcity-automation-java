@@ -1,0 +1,16 @@
+name: Deploy to prod
+on: workflow_call
+
+# Примерные степы как может выглядеть пайплайн фронтенда
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy frontend to production
+        run: echo Deploying frontend to production
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy backend to production
+        run: echo Deploying backend to production
