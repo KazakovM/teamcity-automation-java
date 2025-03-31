@@ -2,6 +2,8 @@ package org.example.teamcity.ui;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.example.teamcity.BaseTest;
 import org.example.teamcity.api.models.Project;
 import org.example.teamcity.api.models.User;
@@ -23,6 +25,10 @@ public class BaseUiTest extends BaseTest {
         Configuration.remote = getProperty("remote");
         Configuration.browserSize = getProperty("browserSize");
         Configuration.browserCapabilities.setCapability("selenoid:options", Map.of("enableVNC", true, "enableLog", true));
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide()
+                .screenshots(true)
+                .savePageSource(true)
+                .includeSelenideSteps(true));
 
         // НЕ ПИСАТЬ UI ТЕСТЫ С ЛОКАЛЬНЫМ БРАУЗЕРОМ
         // СПЕРВА НАСТРОИТЬ CICD И ПОТОМ ЗАПУСКАТЬ ТЕСТЫ
