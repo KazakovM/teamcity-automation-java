@@ -7,7 +7,7 @@ public class BuildTypeElement extends BasePageElement{
 
     public BuildTypeElement(SelenideElement element) {
         super(element);
-        this.name = find(".BuildTypeLine__link--MF");
+        this.name = find("span[class*='MiddleEllipsis']");
     }
 
     public String getName() {

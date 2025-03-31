@@ -20,7 +20,7 @@ public class ProjectsPage extends BasePage {
         header.shouldBe(Condition.visible, BASE_WAITING);
     }
 
-    private ElementsCollection projectElements = $$("div[class*='Subproject__container']");
+    private ElementsCollection projectElements = $$("div[class*='Subproject__summaryWrapper']");
 
     // ElementsCollection -> List<ProjectElement>
     // UI elements -> List<Object>
