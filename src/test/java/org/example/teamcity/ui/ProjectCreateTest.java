@@ -7,8 +7,8 @@ import org.example.teamcity.ui.pages.ProjectsPage;
 import org.example.teamcity.ui.pages.admin.CreateProjectPage;
 import org.testng.annotations.Test;
 
-import static io.qameta.allure.Allure.step;
 import static org.example.teamcity.api.enums.Endpoint.PROJECTS;
+import static org.example.teamcity.api.generators.TestDataStorage.getTestDataStorage;
 
 @Test(groups = {"Regression"})
 public class ProjectCreateTest extends BaseUiTest {
@@ -35,5 +35,6 @@ public class ProjectCreateTest extends BaseUiTest {
                 .getProjects().stream()
                 .anyMatch(project -> project.getName().text().equals(testData.getProject().getName()));
         softAssert.assertTrue(projectExists);
+        getTestDataStorage().addCreatedEntity(PROJECTS, createdProject);
     }
 }
