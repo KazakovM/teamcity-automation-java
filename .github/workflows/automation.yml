@@ -62,15 +62,6 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
-        if: always()
-        with:
-          gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: target/allure-results
-          subfolder: ${{ inputs.package }}
-
       - name: Load test report history
         uses: actions/checkout@v2
         if: always()
