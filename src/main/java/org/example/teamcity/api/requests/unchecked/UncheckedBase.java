@@ -1,5 +1,6 @@
 package org.example.teamcity.api.requests.unchecked;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -16,6 +17,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
+    @Step("Creating {endpoint.getModelClass().simpleName}")
     public Response create(BaseModel model) {
         return RestAssured
                 .given()
@@ -25,6 +27,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
+    @Step("Reading {endpoint.getModelClass().simpleName}")
     public Response read(String locator) {
         return RestAssured
                 .given()
@@ -33,6 +36,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     // Перегруженный метод для параметров пути
+    @Step("Reading {endpoint.getModelClass().simpleName}")
     public Response read(Map<String, Object> pathParams) {
         return RestAssured
                 .given()
@@ -43,6 +47,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
+    @Step("Updating {endpoint.getModelClass().simpleName}")
     public Response update(String locator, BaseModel model) {
         return RestAssured
                 .given()
@@ -52,6 +57,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
+    @Step("Deleting {endpoint.getModelClass().simpleName}")
     public Response delete(String locator) {
         return RestAssured
                 .given()
