@@ -1,0 +1,1 @@
+{"total":6,"items":[{"uid":"44fe349f2e2b0da2073f2439e9f22437","name":"Create project","statistic":{"failed":0,"broken":1,"skipped":70,"passed":0,"unknown":0,"total":71}},{"uid":"c5b51ea957a3170835aabbaffb787a6b","name":"Start build","statistic":{"failed":0,"broken":1,"skipped":2,"passed":0,"unknown":0,"total":3}}]}
