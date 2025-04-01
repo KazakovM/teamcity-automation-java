@@ -30,8 +30,7 @@ public class Specifications {
         ));
         reqBuilder.setContentType(ContentType.JSON);
         reqBuilder.setAccept(ContentType.JSON);
-        reqBuilder.addFilters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter()));
-        reqBuilder.addFilter(new AllureRestAssured());
+        reqBuilder.addFilters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter(), new AllureRestAssured()));
         return reqBuilder;
     }
 
