@@ -23,6 +23,7 @@ public class Specifications {
     private static RequestSpecBuilder reqBuilder() {
         RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
         reqBuilder.setBaseUri("http://" + getProperty("host")).build();
+        reqBuilder.addFilter(new AllureRestAssured());
         reqBuilder.addFilter(new RequestLoggingFilter());
         reqBuilder.addFilter(new ResponseLoggingFilter());
         reqBuilder.addFilter(new SwaggerCoverageRestAssured(
@@ -30,7 +31,6 @@ public class Specifications {
                         Paths.get("target/" + OUTPUT_DIRECTORY)
                 )
         ));
-        reqBuilder.addFilter(new AllureRestAssured());
         reqBuilder.setContentType(ContentType.JSON);
         reqBuilder.setAccept(ContentType.JSON);
         return reqBuilder;
