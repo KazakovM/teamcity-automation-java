@@ -1,6 +1,5 @@
 package org.example.teamcity.api.requests.checked;
 
-import io.qameta.allure.Step;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.example.teamcity.api.enums.Endpoint;
@@ -21,7 +20,6 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     }
 
     @Override
-    @Step("Creating {model}")
     public T create(BaseModel model) {
         var createdModel = (T) uncheckedBase
                 .create(model)
@@ -32,7 +30,6 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     }
 
     @Override
-    @Step("Reading entity with locator: {locator}")
     public T read(String locator) {
         return (T) uncheckedBase
                 .read(locator)
@@ -41,7 +38,6 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     }
 
     // Новый метод для чтения с несколькими параметрами пути
-    @Step("Reading entity")
     public T read(Map<String, Object> pathParams) {
         return (T) uncheckedBase
                 .read(pathParams)
@@ -50,7 +46,6 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     }
 
     @Override
-    @Step("Updating {model}")
     public T update(String locator, BaseModel model) {
         return (T) uncheckedBase
                 .update(locator, model)
@@ -59,7 +54,6 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
     }
 
     @Override
-    @Step("Deleting {model}")
     public Object delete(String locator) {
         return uncheckedBase
                 .delete(locator)
