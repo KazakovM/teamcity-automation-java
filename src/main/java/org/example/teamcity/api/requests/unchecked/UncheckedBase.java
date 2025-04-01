@@ -19,7 +19,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Create {model.getClass().getSimpleName()}")
+    @Step("Create {model.class.simpleName}")
     public Response create(BaseModel model) {
         return RestAssured
                 .given()
@@ -50,7 +50,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Update {model.getClass().getSimpleName()}")
+    @Step("Update {model.class.simpleName}")
     public Response update(String locator, BaseModel model) {
         return RestAssured
                 .given()
