@@ -19,7 +19,34 @@
         <selenide.version>7.4.3</selenide.version>
         <swagger-coverage-version>1.5.0</swagger-coverage-version>
         <allure.version>2.27.0</allure.version>
+        <aspectj.version>1.9.19</aspectj.version>
     </properties>
+
+    <build>
+        <plugins>
+            <!-- Добавьте этот плагин -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/runAutoMobileTest.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
@@ -114,5 +141,4 @@
         </dependency>
 
     </dependencies>
-
 </project>
