@@ -1,10 +1,7 @@
 package org.example.teamcity.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.teamcity.api.annotations.Optional;
 import org.example.teamcity.api.annotations.Parameterizable;
 import org.example.teamcity.api.annotations.Random;
@@ -13,6 +10,7 @@ import org.example.teamcity.api.annotations.Random;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project extends BaseModel{
     @Random
