@@ -1,12 +1,13 @@
 package org.example.teamcity.api.build;
 
 import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
 import org.apache.http.HttpStatus;
 import org.example.teamcity.api.BaseApiTest;
 import org.example.teamcity.api.models.Build;
 import org.example.teamcity.api.models.BuildLog;
 import org.example.teamcity.api.models.Project;
-import org.example.teamcity.api.requests.CheckedRequests;
+import org.example.teamcity.api.requests.checked.CheckedRequests;
 import org.example.teamcity.common.WireMock;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -54,7 +55,7 @@ public class StartBuildTest extends BaseApiTest {
         softAssert.assertTrue(buildLogs.getLogs().contains("Hello, world!"), "Build logs do not contain 'Hello, world!'");
     }
 
-
+    @Step("Setting up mocks")
     private void setupBuildQueueMock() {
         var mockBuild = Build.builder()
                 .state(BUILD_STATE_FINISHED)
@@ -63,23 +64,26 @@ public class StartBuildTest extends BaseApiTest {
         WireMock.setupServer(post(BUILD_QUEUE.getUrl()), HttpStatus.SC_OK, mockBuild);
     }
 
+    @Step("Setting up mocks")
     private void setupBuildLogsMock(String id) {
         var mockBuildLog = new BuildLog();
         mockBuildLog.setLogs("Hello, world!");
         WireMock.setupServer(get(urlEqualTo("/app/rest/builds/id:" + id + "/log")), HttpStatus.SC_OK, mockBuildLog);
     }
 
-
+    @Step("Starting build")
     private Build startBuild() {
         return checkedMockRequest.<Build>getRequest(BUILD_QUEUE).create(Build.builder()
                 .buildType(testData.getBuildType())
                 .build());
     }
 
+    @Step("Reading build logs")
     private BuildLog retrieveBuildLogs(String buildId) {
         return checkedMockRequest.<BuildLog>getRequest(BUILD_LOGS).read(Map.of("id", buildId));
     }
 
+    @Step("Create test data and initialize requests")
     private void createTestDataAndInitRequests() {
         // Create a test user
         superUserCheckedRequests.getRequest(USERS).create(testData.getUser());
@@ -93,6 +97,7 @@ public class StartBuildTest extends BaseApiTest {
         checkedMockRequest = new CheckedRequests(mockSpec());
     }
 
+    @Step("Check build final status")
     private void assertBuildHappyEnding(Build build) {
         softAssert.assertEquals(build.getState(), BUILD_STATE_FINISHED);
         softAssert.assertEquals(build.getStatus(), BUILD_STATUS_SUCCESS);

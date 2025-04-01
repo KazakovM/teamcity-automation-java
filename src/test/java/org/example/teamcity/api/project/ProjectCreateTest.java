@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus;
 import org.example.teamcity.api.BaseApiTest;
 import org.example.teamcity.api.generators.RandomData;
 import org.example.teamcity.api.models.*;
-import org.example.teamcity.api.requests.CheckedRequests;
+import org.example.teamcity.api.requests.checked.CheckedRequests;
 import org.example.teamcity.api.requests.unchecked.UncheckedBase;
 import org.example.teamcity.common.provider.BooleanProvider;
 import org.example.teamcity.common.provider.InvalidIdDataProvider;

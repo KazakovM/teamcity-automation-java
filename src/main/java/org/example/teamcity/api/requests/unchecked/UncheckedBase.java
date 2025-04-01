@@ -17,7 +17,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Creating {endpoint.getModelClass().simpleName}")
+    @Step("Creating {model}")
     public Response create(BaseModel model) {
         return RestAssured
                 .given()
@@ -27,7 +27,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Reading {endpoint.getModelClass().simpleName}")
+    @Step("Reading entity with locator: {locator}")
     public Response read(String locator) {
         return RestAssured
                 .given()
@@ -36,7 +36,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     // Перегруженный метод для параметров пути
-    @Step("Reading {endpoint.getModelClass().simpleName}")
+    @Step("Reading entity")
     public Response read(Map<String, Object> pathParams) {
         return RestAssured
                 .given()
@@ -47,7 +47,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Updating {endpoint.getModelClass().simpleName}")
+    @Step("Updating {model}")
     public Response update(String locator, BaseModel model) {
         return RestAssured
                 .given()
@@ -57,7 +57,7 @@ public class UncheckedBase extends Request implements CrudInterface {
     }
 
     @Override
-    @Step("Deleting {endpoint.getModelClass().simpleName}")
+    @Step("Deleting {model}")
     public Response delete(String locator) {
         return RestAssured
                 .given()

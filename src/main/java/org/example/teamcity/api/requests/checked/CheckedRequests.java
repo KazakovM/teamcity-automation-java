@@ -1,9 +1,8 @@
-package org.example.teamcity.api.requests;
+package org.example.teamcity.api.requests.checked;
 
 import io.restassured.specification.RequestSpecification;
 import org.example.teamcity.api.enums.Endpoint;
 import org.example.teamcity.api.models.BaseModel;
-import org.example.teamcity.api.requests.checked.CheckedBase;
 
 import java.util.EnumMap;
 
