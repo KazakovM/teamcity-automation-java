@@ -23,14 +23,16 @@ public class Specifications {
     private static RequestSpecBuilder reqBuilder() {
         RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
         reqBuilder.setBaseUri("http://" + getProperty("host")).build();
+        reqBuilder.addFilter(new RequestLoggingFilter());
+        reqBuilder.addFilter(new ResponseLoggingFilter());
         reqBuilder.addFilter(new SwaggerCoverageRestAssured(
                 new FileSystemOutputWriter(
                         Paths.get("target/" + OUTPUT_DIRECTORY)
                 )
         ));
+        reqBuilder.addFilter(new AllureRestAssured());
         reqBuilder.setContentType(ContentType.JSON);
         reqBuilder.setAccept(ContentType.JSON);
-        reqBuilder.addFilters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter(), new AllureRestAssured()));
         return reqBuilder;
     }
 
