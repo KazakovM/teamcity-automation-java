@@ -11,19 +11,22 @@ import org.example.teamcity.api.requests.Request;
 
 import java.util.Map;
 
+import static io.qameta.allure.Allure.step;
+
 public class UncheckedBase extends Request implements CrudInterface {
     public UncheckedBase(RequestSpecification spec, Endpoint endpoint) {
         super(spec, endpoint);
     }
 
     @Override
-    @Step("Creating {model}")
     public Response create(BaseModel model) {
-        return RestAssured
-                .given()
-                .spec(spec)
-                .body(model)
-                .post(endpoint.getUrl());
+        return step("Create " + model.getClass().getSimpleName(), () ->
+                RestAssured
+                        .given()
+                        .spec(spec)
+                        .body(model)
+                        .post(endpoint.getUrl())
+        );
     }
 
     @Override
